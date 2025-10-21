@@ -46,7 +46,6 @@ f, g Pie charts showing the Chi-squared test of clinicopathologic factors for PR
 Once you understand the mapping between input data and visual outputs, as well as the role of each code block in generating plots, you can adapt this workflow to broader data types.
 
 # 环境设置
-
 # Environment Configuration
 
 ```{r}
@@ -83,22 +82,18 @@ pie.high <- pie.low <- list()
 fisher.p <- c()
 for (i in vname) {
   tmp <- table(dat[,gname], dat[,i])
-  p <- format(fisher.test(tmp)$p.value,digits = 2)
+  #p <- format(fisher.test(tmp)$p.value,digits = 2) # fisher test
+  p <- format(chisq.test(tmp)$p.value, digits = 2) # 用卡方检验
   names(p) <- i
   fisher.p <- c(fisher.p, p)
-  
   pie.dat <- 
     tmp %>% as.data.frame() %>% group_by(Var1) %>% mutate(Pct = Freq/sum(Freq)) %>% as.data.frame()
-  
-  # 表格内的两行对应Risk的两类：Risk high和Risk low
-  # The two rows in the table correspond to the two types of Risk: Risk high and Risk low
   pie.high[[i]] <- pie.dat[which(pie.dat$Var1 == "High"),]
   pie.low[[i]] <- pie.dat[which(pie.dat$Var1 == "Low"),]
 }
 ```
 
 # 开始画图
-
 # Start plotting
 
 用base plot画图，如果你要查看某部分代码的效果，请从plot所在的行到当前位置一起，整段运行。
@@ -393,6 +388,7 @@ legend("topleft",
 # Close the image handle
 invisible(dev.off())
 ```
+
 
 ![](pieTable.pdf)
 
